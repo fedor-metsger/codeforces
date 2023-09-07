@@ -1,6 +1,7 @@
 
 import logging
 import os
+from dotenv import load_dotenv
 
 from telegram import (
     ReplyKeyboardRemove,
@@ -18,7 +19,11 @@ from telegram.ext import (
     CallbackQueryHandler
 )
 
+from config.settings import BASE_DIR
 from bot.db import get_topics, get_problems_by_tag
+
+
+load_dotenv(BASE_DIR / '.env')
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
