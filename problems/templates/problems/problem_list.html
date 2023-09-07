@@ -1,0 +1,74 @@
+{% extends "problems/base.html" %}
+
+{% load static %}
+
+{% block title %}Задачи{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 col-sm-12 portfolio-item">
+        <div class="card h-100">
+            {% if is_paginated %}
+            <div class="pagination">
+            <span class="page-links">
+                <table class="table"><tr><td>
+                {% if page_obj.has_previous %}
+                    <a href="/problem?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                </td><td>
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                </td><td>
+                {% if page_obj.has_next %}
+                    <a href="/problem?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+                </td></tr></table>
+            </span>
+            </div>
+            {% endif %}
+            <table class="table">
+                <thead>
+                <td><b></b>Номер</b></td>
+                <td><b>Название</b></td>
+                <td><b>Тэги</b></td>
+                <td><b>Сложность</b></td>
+                <td><b>Количество решивших задачу</b></td>
+                </thead>
+                <tbody>
+                {% for p in object_list %}
+                <tr>
+                    <td>
+                        <p class="card-text">{{ p.number }}</p>
+                    </td>
+                    <td>
+                        <p class="card-text">{{ p.name }}</p>
+                    </td>
+                    <td style="width:50%">
+                        <p style="line-height:2">
+                        {% for tag in p.tags.all %}
+<!--                             <mark class="text-light bg-secondary">-->
+                                 <a href="{% url 'tag_detail' tag.id %}" class="text-light bg-secondary">{{ tag.name }}</a>
+<!--                             </mark>-->
+                        {% endfor %}
+                        </p>
+<!--                        {% for tag in p.tags.all %}-->
+<!--&lt;!&ndash;                        <span class="badge badge-secondary">{{ tag.name }}</span>&ndash;&gt;-->
+<!--                        <a href="{% url 'tag_detail' tag.id %}" class="badge badge-secondary"">{{ tag.name }}</a>-->
+<!--                        {% endfor %}-->
+                    </td>
+                    <td>
+                        <p class="card-text" align="right">{{ p.difficulty }}</p>
+                    </td>
+                    <td>
+                        <p class="card-text" align="right">{{ p.solutions }}</p>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <!--            </div>-->
+        </div>
+    </div>
+</div>
+{% endblock %}

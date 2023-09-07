@@ -1,0 +1,60 @@
+{% extends "problems/base.html" %}
+
+{% load static %}
+
+{% block title %}Тэги{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 col-sm-12 portfolio-item">
+        <div class="card h-100">
+            {% if is_paginated %}
+            <div class="pagination">
+            <span class="page-links">
+                <table class="table"><tr><td>
+                {% if page_obj.has_previous %}
+                    <a href="/tag?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                </td><td>
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                </td><td>
+                {% if page_obj.has_next %}
+                    <a href="/tag?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+                </td></tr></table>
+            </span>
+            </div>
+            {% endif %}
+            <table class="table">
+                <thead>
+                <td><b>Номер</b></td>
+                <td><b>Название</b></td>
+                <td><b>Задачи</b></td>
+                </thead>
+                <tbody>
+                {% for t in object_list %}
+                <tr>
+                    <td>
+                        <p class="card-text">{{ t.id }}</p>
+                    </td>
+                    <td>
+                        <p class="card-text">{{ t.name }}</p>
+                    </td>
+                    <td style="width:70%">
+                        <p style="line-height:2">
+                        {% for b in t.belonging.all|dictsort:"problem.number" %}
+                        <mark class="text-light bg-secondary">{{ b.problem.number }}</mark>
+                        {% endfor %}
+                        </p>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <!--            </div>-->
+        </div>
+    </div>
+</div>
+{% endblock %}

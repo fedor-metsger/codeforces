@@ -1,0 +1,38 @@
+{% extends "problems/base.html" %}
+
+{% load static %}
+
+{% block title %}Тэг object.name{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 col-sm-12 portfolio-item">
+        <div class="card h-100">
+            <table class="table">
+                <thead>
+                <td><b>Номер</b></td>
+                <td><b>Название</b></td>
+                <td><b>Задачи</b></td>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <p class="card-text">{{ object.id }}</p>
+                    </td>
+                    <td>
+                        <p class="card-text">{{ object.name }}</p>
+                    </td>
+                    <td style="width:70%">
+                        <p style="line-height:2">
+                        {% for b in object.belonging.all|dictsort:"problem.number" %}
+                        <mark class="text-light bg-secondary">{{ b.problem.number }}</mark>
+                        {% endfor %}
+                        </p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
