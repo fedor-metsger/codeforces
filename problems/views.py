@@ -19,6 +19,7 @@ def index_view(request):
     }
     return render(request, "problems/index.html", context=context)
 
+
 class ProblemListView(ListView):
     model = Problem
     extra_context = {
@@ -36,6 +37,7 @@ class ProblemListView(ListView):
     #     context_data["not_manager"] = "manager" not in [i.name for i in self.request.user.groups.all()]
     #     return context_data
 
+
 class TagListView(ListView):
     model = Tag
     extra_context = {
@@ -52,6 +54,7 @@ class TagListView(ListView):
     #     context_data = super().get_context_data(**kwargs)
     #     context_data["not_manager"] = "manager" not in [i.name for i in self.request.user.groups.all()]
     #     return context_data
+
 
 class TagDetailView(DetailView):
     model = Tag

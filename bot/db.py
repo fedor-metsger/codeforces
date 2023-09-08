@@ -3,7 +3,7 @@ import atexit
 import os
 from dotenv import load_dotenv
 
-from sqlalchemy import Table, Column, DateTime, Integer, String, create_engine, func, Text, select, text, MetaData
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, registry
 
@@ -27,34 +27,33 @@ Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
 mapper_registry = registry()
-#
-# tag_table = Table(
-#     "problems_tag",
-#     mapper_registry.metadata,
-#     Column("id", Integer, primary_key=True),
-#     Column("name", String(150)),
-# )
-
 metadata_obj = MetaData()
 metadata_obj.reflect(bind=engine)
 tag_table = metadata_obj.tables["problems_tag"]
 problem_table = metadata_obj.tables["problems_problem"]
 belonging_table = metadata_obj.tables["problems_belonging"]
 
+
 class Tag:
     pass
 
+
 mapper_registry.map_imperatively(Tag, tag_table)
+
 
 class Problem:
     pass
 
+
 mapper_registry.map_imperatively(Problem, problem_table)
+
 
 class Belonging:
     pass
 
+
 mapper_registry.map_imperatively(Belonging, belonging_table)
+
 
 def get_topics():
     tags = Session().query(Tag)
@@ -64,9 +63,10 @@ def get_topics():
         result[str(t.id)] = t.name
     return result
 
+
 def get_problems_by_tag(tag: int):
     problems = Session().query(Belonging, Problem).filter(
-        Belonging.problem_id==Problem.id).filter(Belonging.tag_id==tag)
+        Belonging.problem_id == Problem.id).filter(Belonging.tag_id == tag)
     result = []
     for b, p in problems:
         result.append({"number": p.number, "name": p.name, "difficulty": p.difficulty})

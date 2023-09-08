@@ -2,7 +2,6 @@
 from datetime import datetime
 import os
 
-from django.conf import settings
 from django.shortcuts import redirect
 
 from problems.models import Tag, Problem, Belonging
@@ -22,6 +21,7 @@ def switch_crontab(request):
         os.system(f'./manage.py crontab add >> {LOG_FILE_NAME}')
     ScraperManager.crontab_status = not ScraperManager.crontab_status
     return redirect('index')
+
 
 def scan() -> int:
     problems = scrape_data()
@@ -45,11 +45,13 @@ def scan() -> int:
             prob.save()
     return len(problems)
 
+
 def scan_codeforces(request):
     log_to_file(f'-------------------------------\nРучной запуск загрузки в {datetime.utcnow().time()}\n')
     num = scan()
     log_to_file(f'Загружено {num} задач\n')
     return redirect('index')
+
 
 def distrib():
     problems = Problem.objects.order_by('difficulty')
@@ -65,7 +67,7 @@ def distrib():
             if t.name not in tags:
                 tags[t.name] = []
                 # print(f'counts["{t.name}"] => 0')
-            if least_name == None or len(tags[t.name]) < least_count:
+            if least_name is None or len(tags[t.name]) < least_count:
                 least_name = t.name
                 least_count = len(tags[t.name])
         tags[least_name].append([p.number, p.id])
@@ -83,6 +85,7 @@ def distrib():
 def distribute(request):
     distrib()
     return redirect('index')
+
 
 def load_problems():
     log_to_file(f'-------------------------------\nStarting at {datetime.utcnow().time()}\n')

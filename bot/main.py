@@ -37,6 +37,7 @@ TOPIC, DIFFICULTY = range(2)
 topics = {}
 selections = {}
 
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     msg = "Добрый день. Я бот, который помогает подбирать задания на сайте Codeforces.com.\n" \
@@ -56,6 +57,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return TOPIC
 
+
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     global selections
     query = update.callback_query
@@ -69,12 +71,13 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.callback_query.from_user.id
     selections[user_id] = {"topic": selected_topic, "difficulty": None}
     logger.info("Topic of %s: %s", user.first_name, selected_topic)
-
     return DIFFICULTY
+
 
 def get_ten_nearest(probs: list, diff: int):
     sorted_probs = sorted(probs, key=lambda d: abs(d["difficulty"] - diff))
     return sorted_probs[0:10]
+
 
 async def difficulty(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
@@ -86,18 +89,15 @@ async def difficulty(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     for p in sorted10:
         msg = msg + f'\n{p["number"]} ({p["difficulty"]}) - "{p["name"]}"'
     await update.message.reply_text(msg)
-
     return ConversationHandler.END
 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Cancels and ends the conversation."""
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     await update.message.reply_text(
         "До свидания! Заглядывайте ещё.", reply_markup=ReplyKeyboardRemove()
     )
-
     return ConversationHandler.END
 
 
@@ -115,9 +115,6 @@ def main() -> None:
     )
 
     application.add_handler(conv_handler)
-    # application.add_handler(CallbackQueryHandler(button))
-
-    # Run the bot until the user presses Ctrl-C
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 

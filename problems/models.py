@@ -30,6 +30,7 @@ class Problem(models.Model):
         verbose_name = 'задача'
         verbose_name_plural = 'задачи'
 
+
 class Belonging(models.Model):
     tag = models.ForeignKey(Tag,
                             related_name="belonging",
@@ -42,7 +43,6 @@ class Belonging(models.Model):
                                 null=False,
                                 blank=False,
                                 verbose_name="задача")
-
 
     def __str__(self):
         return f'Belonging({self.name})'

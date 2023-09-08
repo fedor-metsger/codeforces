@@ -15,6 +15,7 @@ LOG_FILE_NAME = os.getenv("LOG_FILE_NAME")
 
 load_dotenv(BASE_DIR / '.env')
 
+
 def log_to_file(msg):
     with open(LOG_FILE_NAME, "a") as logfile:
         logfile.write(msg)
@@ -47,10 +48,9 @@ def scrape_data() -> list:
         for p in range(40):
             time.sleep(1)
             print(f"Загружается страница {p + 1}")
-            params = {"page": p + 1}
             result = requests.get(f'{PROBLEMSET_URL}/page/{p + 1}')
             soup = BeautifulSoup(result.content, 'html.parser')
-            table = soup.find_all("table", {"class":"problems"})
+            table = soup.find_all("table", {"class": "problems"})
             for r in table[0].contents:
                 raw = r
                 if isinstance(r, Tag):
@@ -63,7 +63,7 @@ def scrape_data() -> list:
                             if r.contents[9].text.strip()[0] == 'x':
                                 solutions = int(r.contents[9].text.strip()[1:])
                             else:
-                                print(f'Странное содержимое поля "Количество решивших задачу":',
+                                print('Странное содержимое поля "Количество решивших задачу":',
                                       {r.contents[9].text.strip()})
                         difficulty = int(r.contents[7].text.strip()) if r.contents[7].text.strip() else 0
                         # print(number, name, tags, solutions, difficulty)
@@ -84,8 +84,10 @@ def scrape_data() -> list:
         print("Обрабатываемая строка:", raw)
         return res
 
+
 def main():
-    res = scrape_data()
+    scrape_data()
+
 
 if __name__ == "__main__":
     main()
