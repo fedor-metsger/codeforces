@@ -1,21 +1,36 @@
 
-import requests
+import os
+from datetime import datetime
 import time
-import re
+from dotenv import load_dotenv
+
+import requests
 from bs4 import BeautifulSoup, Tag
 
+from config.settings import BASE_DIR
 
 PROBLEMSET_URL = "https://codeforces.com/problemset"
+LOG_FILE_NAME = os.getenv("LOG_FILE_NAME")
+
+
+load_dotenv(BASE_DIR / '.env')
+
+def log_to_file(msg):
+    with open(LOG_FILE_NAME, "a") as logfile:
+        logfile.write(msg)
 
 
 def scrape_data() -> list:
+    log_to_file(f'-------------------------------\nScraper started at {datetime.utcnow().time()}\n')
     res = []
     raw = None
     try:
         result = requests.get(PROBLEMSET_URL)
         if result.status_code != 200:
             print("Ошибка при запросе данных с сайта Codeforces: Status code ", result.status_code)
-            return None
+            log_to_file("Ошибка при запросе данных с сайта Codeforces: Status code " +
+                        str(result.status_code) + '\n')
+            return res
 
         soup = BeautifulSoup(result.content, 'html.parser')
         total_pages = None
@@ -26,6 +41,7 @@ def scrape_data() -> list:
 
         # # except:
         # #     pass
+        log_to_file(f"Всего найдено {total_pages} страниц\n")
         print(f"Всего найдено {total_pages} страниц")
         # for p in range(total_pages):
         for p in range(40):
@@ -58,9 +74,12 @@ def scrape_data() -> list:
                             "solutions": solutions,
                             "difficulty": difficulty
                         })
+        log_to_file(f'Loaded {len(res)} problems\n')
         print(f'Loaded {len(res)} problems')
         return res
     except Exception as e:
+        log_to_file("Ошибка при запросе данных с сайта Codeforces:" + repr(e) + '\n')
+        log_to_file("Обрабатываемая строка:" + str(raw) + '\n')
         print("Ошибка при запросе данных с сайта Codeforces:", repr(e))
         print("Обрабатываемая строка:", raw)
         return res

@@ -6,30 +6,24 @@ from django.conf import settings
 from django.shortcuts import redirect
 
 from problems.models import Tag, Problem, Belonging
-from scraper.scraper import scrape_data
-
-LOG_FILE_NAME = "/tmp/scraper.log"
+from scraper.scraper import scrape_data, LOG_FILE_NAME, log_to_file
 
 
 class ScraperManager():
     crontab_status = False
 
 
-def run():
-    with open(LOG_FILE_NAME, "a") as logfile:
-
-        now_time = datetime.utcnow().time()
-        logfile.write(f'-------------------------------\nStarting at {now_time}\n')
-
 def switch_crontab(request):
     if ScraperManager.crontab_status:
-        os.system("./manage.py crontab remove")
+        log_to_file(f'-------------------------------\nCrontab disbled at {datetime.utcnow().time()}\n')
+        os.system(f'./manage.py crontab remove >> {LOG_FILE_NAME}')
     else:
-        os.system("./manage.py crontab add")
+        log_to_file(f'-------------------------------\nCrontab enbled at {datetime.utcnow().time()}\n')
+        os.system(f'./manage.py crontab add >> {LOG_FILE_NAME}')
     ScraperManager.crontab_status = not ScraperManager.crontab_status
     return redirect('index')
 
-def scan_codeforces(request):
+def scan() -> int:
     problems = scrape_data()
     if problems:
         for p in problems:
@@ -49,10 +43,15 @@ def scan_codeforces(request):
                     tag = Tag.objects.create(name=t)
                 prob.tags.add(tag)
             prob.save()
+    return len(problems)
+
+def scan_codeforces(request):
+    log_to_file(f'-------------------------------\nРучной запуск загрузки в {datetime.utcnow().time()}\n')
+    num = scan()
+    log_to_file(f'Загружено {num} задач\n')
     return redirect('index')
 
-def distribute(request):
-
+def distrib():
     problems = Problem.objects.order_by('difficulty')
 
     tags = {}
@@ -80,4 +79,13 @@ def distribute(request):
             b = Belonging.objects.create(tag=tag, problem_id=p[1])
             b.save()
 
+
+def distribute(request):
+    distrib()
     return redirect('index')
+
+def load_problems():
+    log_to_file(f'-------------------------------\nStarting at {datetime.utcnow().time()}\n')
+    num = scan()
+    log_to_file(f'Loaded {num} problems\n')
+    distrib()
