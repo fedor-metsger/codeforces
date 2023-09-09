@@ -5,7 +5,7 @@ import os
 from django.shortcuts import redirect
 
 from problems.models import Tag, Problem, Belonging
-from scraper.scraper import scrape_data, LOG_FILE_NAME, log_to_file
+from scraper.scraper import LOG_FILE_NAME, log_to_file, scrape_api
 
 
 class ScraperManager():
@@ -24,14 +24,16 @@ def switch_crontab(request):
 
 
 def scan() -> int:
-    problems = scrape_data()
+    # problems = scrape_data()
+    problems = scrape_api()
+
     if problems:
-        for p in problems:
-            if Problem.objects.filter(number=p["number"]).exists():
-                prob = Problem.objects.get(number=p["number"])
+        for n, p in problems.items():
+            if Problem.objects.filter(number=n).exists():
+                prob = Problem.objects.get(number=n)
             else:
                 prob = Problem.objects.create(
-                    number=p["number"],
+                    number=n,
                     name=p["name"],
                     solutions=p["solutions"],
                     difficulty=p["difficulty"]
@@ -54,32 +56,33 @@ def scan_codeforces(request):
 
 
 def distrib():
+    log_to_file(f'-------------------------------\n'
+                f'Запуск распределения задач по тэгам в {datetime.utcnow().time()}\n')
     problems = Problem.objects.order_by('difficulty')
 
     tags = {}
     for p in problems:
-        # print(p.number)
 
         least_count = None
         least_name = None
         for t in p.tags.all():
-            # print(t.name)
             if t.name not in tags:
                 tags[t.name] = []
-                # print(f'counts["{t.name}"] => 0')
             if least_name is None or len(tags[t.name]) < least_count:
                 least_name = t.name
                 least_count = len(tags[t.name])
-        tags[least_name].append([p.number, p.id])
-        # print(f'tags["{least_name}"] =>', tags[least_name])
+        if least_name in tags:
+            tags[least_name].append([p.number, p.id])
 
     for k in tags:
+        log_to_file(f'{k} = {str(tags[k])}\n')
         print(f'{k} = ', tags[k])
         tag = Tag.objects.filter(name=k).get()
         Belonging.objects.filter(tag=tag.id).delete()
         for p in tags[k]:
             b = Belonging.objects.create(tag=tag, problem_id=p[1])
             b.save()
+    log_to_file(f'Запуск распределения задач по тэгам завершён в {datetime.utcnow().time()}\n')
 
 
 def distribute(request):

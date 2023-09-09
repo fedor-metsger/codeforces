@@ -27,16 +27,6 @@ class ProblemListView(ListView):
     }
     paginate_by = 10
 
-    # def get_queryset(self):
-    #     if "manager" in [i.name for i in self.request.user.groups.all()]:
-    #         return super().get_queryset()
-    #     return super().get_queryset().filter(owner=self.request.user).order_by('pk')
-    #
-    # def get_context_data(self, **kwargs):
-    #     context_data = super().get_context_data(**kwargs)
-    #     context_data["not_manager"] = "manager" not in [i.name for i in self.request.user.groups.all()]
-    #     return context_data
-
 
 class TagListView(ListView):
     model = Tag
@@ -45,16 +35,6 @@ class TagListView(ListView):
     }
     paginate_by = 3
 
-    # def get_queryset(self):
-    #     if "manager" in [i.name for i in self.request.user.groups.all()]:
-    #         return super().get_queryset()
-    #     return super().get_queryset().filter(owner=self.request.user).order_by('pk')
-    #
-    # def get_context_data(self, **kwargs):
-    #     context_data = super().get_context_data(**kwargs)
-    #     context_data["not_manager"] = "manager" not in [i.name for i in self.request.user.groups.all()]
-    #     return context_data
-
 
 class TagDetailView(DetailView):
     model = Tag
@@ -62,13 +42,3 @@ class TagDetailView(DetailView):
         'title': 'Тег'
     }
     paginate_by = 3
-
-    # def get_queryset(self):
-    #     if "manager" in [i.name for i in self.request.user.groups.all()]:
-    #         return super().get_queryset()
-    #     return super().get_queryset().filter(owner=self.request.user).order_by('pk')
-    #
-    # def get_context_data(self, **kwargs):
-    #     context_data = super().get_context_data(**kwargs)
-    #     context_data["not_manager"] = "manager" not in [i.name for i in self.request.user.groups.all()]
-    #     return context_data
