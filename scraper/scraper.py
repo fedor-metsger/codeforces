@@ -111,7 +111,7 @@ def scrape_api() -> list:
         problems_count = len(problems_data["result"]["problems"])
 
         log_to_file(f"Всего найдено {problems_count} задач\n")
-        print(f"Всего найдено {problems_count} задач")
+        # print(f"Всего найдено {problems_count} задач")
         for p in problems_data["result"]["problems"]:
             number = str(p["contestId"]) + p["index"]
             name = p["name"]

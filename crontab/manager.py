@@ -76,7 +76,7 @@ def distrib():
 
     for k in tags:
         log_to_file(f'{k} = {str(tags[k])}\n')
-        print(f'{k} = ', tags[k])
+        # print(f'{k} = ', tags[k])
         tag = Tag.objects.filter(name=k).get()
         Belonging.objects.filter(tag=tag.id).delete()
         for p in tags[k]:
