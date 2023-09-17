@@ -50,6 +50,10 @@
    - Создание БД и первоначальная миграция.
    - Создание веб-интерфейса.
    - Возможность запуска задач по расписанию.
+  
+1. Для запуска задач по расписанию используется пакет **django-crontab**.
+   Выбор данного пакета обусловлен наличием требуемого функционала а так же хорошей
+   документированностью и простостотой в использовании.
 
 3. **telegram**-бот был реализован с помощью пакета **python-telegram-bot**.
    Данный пакет включает в себя все необходимые возможности:
@@ -62,7 +66,29 @@
 
 ## Путеводитель по коду
 
+Для хранения загруженных задач и тем в БД были разработаны следующие модели:
 
+1. [Tag](https://github.com/fedor-metsger/codeforces/blob/b3ad149efed885f5cae6c8dad59caa72636987b9/problems/models.py#L6C7-L6C10) - модель для хранения тем.
+2. [Problem](https://github.com/fedor-metsger/codeforces/blob/b3ad149efed885f5cae6c8dad59caa72636987b9/problems/models.py#L18) - модель для хранения задач.
+3. [Belonging](https://github.com/fedor-metsger/codeforces/blob/b3ad149efed885f5cae6c8dad59caa72636987b9/problems/models.py#L34) - модель для связи задач и тем, к которым они отнесены.
+
+Для скачивания задач с сайта **Codeforces** была создан модуль [scraper](https://github.com/fedor-metsger/codeforces/tree/main/scraper),
+в котором есть функция [scrape_api](https://github.com/fedor-metsger/codeforces/blob/b3ad149efed885f5cae6c8dad59caa72636987b9/scraper/scraper.py#L93).
+Данная функция позволяет выкачивать данные о задачах с сайта с использованием **Codeforces API**.
+
+Для запуска задач по расписанию был создан модуль [crontab](https://github.com/fedor-metsger/codeforces/tree/main/crontab).
+В модуле содержатся функции:
+- [switch_crontab](https://github.com/fedor-metsger/codeforces/blob/b3ad149efed885f5cae6c8dad59caa72636987b9/crontab/manager.py#L15) -
+позволяет запускать и останавливать периодический запуск задачи.
+- [scan_codeforces](https://github.com/fedor-metsger/codeforces/blob/b3ad149efed885f5cae6c8dad59caa72636987b9/crontab/manager.py#L51) -
+сканирует сайт **Codeforces** и обновляет список задач.
+- [distrib](https://github.com/fedor-metsger/codeforces/blob/b3ad149efed885f5cae6c8dad59caa72636987b9/crontab/manager.py#L58) -
+распределяет задачи по темам.
+- [load_problems](https://github.com/fedor-metsger/codeforces/blob/b3ad149efed885f5cae6c8dad59caa72636987b9/crontab/manager.py#L93) -
+запускается по расписанию для сканирования сайта и распределения задач по темам.
+
+Также был создан модуль [bot](https://github.com/fedor-metsger/codeforces/tree/main/bot),
+в котором реализован функционал **telegram**-бота.
 
 ## Результаты тестов
 
