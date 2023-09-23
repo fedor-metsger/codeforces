@@ -19,6 +19,8 @@ from telegram.ext import (
     CallbackQueryHandler
 )
 
+print(os.getenv("PYTHONPATH"))
+
 from config.settings import BASE_DIR
 from bot.db import get_topics, get_problems_by_tag
 
@@ -70,7 +72,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.callback_query.from_user
     user_id = update.callback_query.from_user.id
     selections[user_id] = {"topic": selected_topic, "difficulty": None}
-    logger.info("Topic of %s: %s", user.first_name, selected_topic)
+    logger.info("Topic for %s: %s", user.first_name, selected_topic)
     return DIFFICULTY
 
 

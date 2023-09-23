@@ -11,7 +11,7 @@ from config.settings import BASE_DIR
 
 # PROBLEMSET_URL = "https://codeforces.com/problemset"
 API_PROBLEMS_URL = "https://codeforces.com/api/problemset.problems"
-LOG_FILE_NAME = os.getenv("LOG_FILE_NAME")
+LOG_FILE_NAME = os.getenv("LOG_FILE_NAME", "/tmp/scraper.log")
 
 
 load_dotenv(BASE_DIR / '.env')
